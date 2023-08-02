@@ -1,5 +1,5 @@
 import hashlib
-from typing import List, Tuple
+from typing import List
 
 from merkletree import MerkleTree
 import time
@@ -9,7 +9,7 @@ import random
 def HASH_FUNCTION(input): return hashlib.sha256(input).digest()
 
 
-DIFFICULTY = 10000
+DIFFICULTY = 1500000
 ''' amount of leaves, difficulty: (DIFFICULTY*2)-1 - hashes required in total'''
 PREV_BLOCK_HASH = b'qwertyuiopasdfghjklzxcvbnmasdfew'
 TIMESTAMP = int(time.time())
@@ -64,7 +64,7 @@ def generate_initial_data(prev_hash: bytes,
     return to_return
 
 
-def mine(prev_hash: bytes, difficulty: int, target: int) -> Tuple[List[bytes], bytes]:
+def mine(prev_hash: bytes, difficulty: int, target: int) -> bytes:
     '''
     Proof of concept for a mining algorithm
 
@@ -76,7 +76,7 @@ def mine(prev_hash: bytes, difficulty: int, target: int) -> Tuple[List[bytes], b
             target: int - the target we are looking for
 
         Returns:
-            A tuple with created proof and a nonce, in this exact order
+            Nonce
     '''
     nonce = 0
 
@@ -96,23 +96,23 @@ def mine(prev_hash: bytes, difficulty: int, target: int) -> Tuple[List[bytes], b
 
         # if the found number is equal to the target - return found data
         if num == target:
-            return (tree.get_proof(0), nonce.to_bytes(8, 'big'))
+            return nonce.to_bytes(8, 'big')
 
         nonce += 1
 
 
-def verification(prev_hash: bytes, difficulty: int, nonce: bytes, proof: List[bytes], root: bytes, target: int):
+def verification(prev_hash: bytes, difficulty: int, nonce: bytes, target: int):
     '''
     calculated PoW verification
     '''
     initial_data = generate_initial_data(
         prev_hash, difficulty, nonce)
-    proof.insert(0, initial_data[1])
-    is_valid = MerkleTree.verify(
-        PREV_BLOCK_HASH, proof, root, HASH_FUNCTION)
-    print("proof is valid:", is_valid)
-
-    print("Target reached:", int.from_bytes(root, 'big') % (MASK+1) == target)
+    #proof.insert(0, initial_data[1])
+    tree = MerkleTree(HASH_FUNCTION, initial_data)
+    tree.build_tree()
+    num = int.from_bytes(tree.root, 'big') % (MASK+1)
+    if num == target:
+        print("Target found")
 
 
 def main():
@@ -122,16 +122,13 @@ def main():
     print("Target:", target)
 
     start_mining = time.time()
-    mined_proof, nonce = mine(
+    nonce = mine(
         PREV_BLOCK_HASH, DIFFICULTY, target)
     delta_mining = time.time() - start_mining
     print("Time taken by mining:", delta_mining)
 
-    proof = mined_proof[1:-1]  # similar to what the node will receive
-
     start_verification = time.time()
-    verification(PREV_BLOCK_HASH, DIFFICULTY, nonce,
-                 proof, mined_proof[-1], target)
+    verification(PREV_BLOCK_HASH, DIFFICULTY, nonce, target)
     delta_verification = time.time() - start_verification
     print("Time taken by verification:", delta_verification)
 
