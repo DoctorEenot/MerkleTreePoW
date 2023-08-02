@@ -9,7 +9,7 @@ import random
 def HASH_FUNCTION(input): return hashlib.sha256(input).digest()
 
 
-DIFFICULTY = 100
+DIFFICULTY = 10000
 ''' amount of leaves, difficulty: (DIFFICULTY*2)-1 - hashes required in total'''
 PREV_BLOCK_HASH = b'qwertyuiopasdfghjklzxcvbnmasdfew'
 TIMESTAMP = int(time.time())
