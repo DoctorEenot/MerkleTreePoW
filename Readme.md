@@ -4,7 +4,7 @@
 
 # Why?
 
-Why to bother with a new PoW scheme and why Bitcoin PoW sucks, you might wander.
+Why to bother with a new PoW scheme and why Bitcoin PoW sucks, you might wonder.
 
 If you don't, then you probably not very familiar with the classic PoW.
 
