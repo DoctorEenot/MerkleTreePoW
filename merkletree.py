@@ -7,7 +7,7 @@ from collections.abc import Callable
 def find_closest_power_of_2(number: int) -> int:
     power = 0
     x = 1
-    while x <= number:
+    while x < number:
         power += 1
         x <<= 1
     return power
@@ -28,15 +28,16 @@ class MerkleTree:
         self.__padding_hash = padding_hash
 
         if len(self.__leaves) % 2 != 0:
-            size = 2**find_closest_power_of_2(len(self.__leaves))
+            self.__depth = find_closest_power_of_2(len(self.__leaves)) + 1
+            size = 2**(self.__depth-1)
             self.__depth = find_closest_power_of_2(size)
             for _ in range(size-len(self.__leaves)):
                 self.__leaves.append(self.__padding_hash)
         else:
-            self.__depth = find_closest_power_of_2(len(self.__leaves))
+            self.__depth = find_closest_power_of_2(len(self.__leaves)) + 1
 
         self.__array_representation = []
-        amount_of_nodes = (2**self.__depth) - 1
+        amount_of_nodes = (len(self.__leaves)*2) - 1
 
         for _ in range(amount_of_nodes - len(self.__leaves)):
             self.__array_representation.append(None)
@@ -138,8 +139,7 @@ class MerkleTree:
 
 
 if __name__ == "__main__":
-    leaves = [b'\x01'*32, b'\x01'*32, b'\x01'*32, b'\x01' *
-              32, b'\x01'*32, b'\x01'*32, b'\x01'*32]
+    leaves = [b'\x01'*32]*(2**20)
     tree = MerkleTree(lambda input: hashlib.sha256(input).digest(), leaves)
 
     tree.build_tree()
