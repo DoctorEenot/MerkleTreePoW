@@ -27,14 +27,10 @@ class MerkleTree:
         self.__depth = 0
         self.__padding_hash = padding_hash
 
-        if len(self.__leaves) % 2 != 0:
-            self.__depth = find_closest_power_of_2(len(self.__leaves)) + 1
-            size = 2**(self.__depth-1)
-            self.__depth = find_closest_power_of_2(size)
-            for _ in range(size-len(self.__leaves)):
-                self.__leaves.append(self.__padding_hash)
-        else:
-            self.__depth = find_closest_power_of_2(len(self.__leaves)) + 1
+        self.__depth = find_closest_power_of_2(len(self.__leaves))+1
+        size = 2**(self.__depth - 1)
+        for _ in range(size-len(self.__leaves)):
+            self.__leaves.append(self.__padding_hash)
 
         self.__array_representation = []
         amount_of_nodes = (len(self.__leaves)*2) - 1
@@ -84,7 +80,7 @@ class MerkleTree:
 
         # leaf_absolute_index = layer_index + leaf
 
-        _, layer_index = MerkleTree.__calculate_boundaries(depth-1)
+        _, layer_index = MerkleTree.__calculate_boundaries(depth)
 
         parent_index = (leaf_absolute_index - 1) // 2
 
@@ -115,7 +111,7 @@ class MerkleTree:
         to_return = [self.__get_sibling(leaf, self.__depth)]
 
         for depth in range(self.__depth, 2, -1):
-            leaf = self.__get_proof_node(leaf, depth)
+            leaf = self.__get_proof_node(leaf, depth - 1)
             to_return.append(self.__array_representation[leaf])
 
         to_return.append(self.root)
@@ -139,7 +135,7 @@ class MerkleTree:
 
 
 if __name__ == "__main__":
-    leaves = [b'\x01'*32]*(2**20)
+    leaves = [b'\x01'*32]*(7)
     tree = MerkleTree(lambda input: hashlib.sha256(input).digest(), leaves)
 
     tree.build_tree()

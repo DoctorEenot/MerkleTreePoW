@@ -9,8 +9,8 @@ import random
 def HASH_FUNCTION(input): return hashlib.sha256(input).digest()
 
 
-DIFFICULTY = 10000
-''' amount of leaves, difficulty: 2^tree_depth - (DIFFICULTY + 1) - hashes required in total'''
+DIFFICULTY = 100
+''' amount of leaves, difficulty: (DIFFICULTY*2)-1 - hashes required in total'''
 PREV_BLOCK_HASH = b'qwertyuiopasdfghjklzxcvbnmasdfew'
 TIMESTAMP = int(time.time())
 ''' timestamp of the last block '''
