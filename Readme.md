@@ -36,7 +36,7 @@ So, the algorithm. I will go through the way I see it's working in the pair Node
     
     The difficulty shows us how much leaves the merkle tree will have
     * So, first, we create some leaves for our merkle tree. To do so, we will be using Hash Chains, so the next hash will have previous one inside. To every hash we add a nonce, somehow. The way nonce is added and the way leaves are generated is not strictly defined and can be changed, but the main idea is to make it uniform, so that anyone in the network will do same steps and get absolutely the same data.
-    * After we created leaves, we create and build out Merkle Tree. This process will take a while, as the amount of hashing operations per one tree will require 2^tree_depth - (DIFFICULTY + 1) hashing operations
+    * After we created leaves, we create and build out Merkle Tree. This process will take a while, as the amount of hashing operations per one tree will require (DIFFICULTY*2)-1 hashing operations
     * After the tree is built, we take our calculated root, calclate a target Sha256(last_block_hash+last_block_timestamp+MAGIC_NUMBER) % (MASK+1) and compare it to the target of the network.
     * If the target was right - congrats you found the right nonce, now build a proof for the first leaf(any leaf, but again, it should be uniform across the network) and send the proof, nonce, root to the node. If the target wasn't right, change/increase nonce start from the beginning.
 
