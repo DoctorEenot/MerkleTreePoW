@@ -51,6 +51,11 @@ So, the algorithm. I will go through the way I see it's working in the pair Node
 * The mask should not be too big, I would suggest not larger, than 255
 * Ideally the merkle tree implementation should always have amount of leaves equal to some power of 2.
 
+### Some formulas:
+* The number of hashing operations needed to build one tree is equal to (DIFFICULTY * 2) - 1. The amount of operations grows linearly.
+* The length of the proof is equal to the depth of the tree
+* The depth of the tree is equal to ceil(log2(DIFFICULTY))
+
 
 # The algorithm is yet to be auditted and proved, that it's in fact safe and doesn't have vulnerabilities.
 
